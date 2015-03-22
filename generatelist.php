@@ -25,7 +25,7 @@
 		}
 	}
 	// count foles and dirs
-	echo "Found ", $dirsum, " folders and ", $filesum, " files.";
+	echo "Found ", $dirsum, " folders and ", $filesum, " files.\n";
 
 
 
