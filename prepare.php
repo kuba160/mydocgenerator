@@ -11,16 +11,22 @@
 	$settings = 0;		// Will be a sum of all folders with settings
 	//
 	//Here are the special files
-	$ignorefile = "ignore";		// Will ignore any folder with that file
-	$settingsfile = "settings";	// That folder will be used for settings
+	$ignoredir = "ignore";		// Will ignore any folder with that file
+	$settingsdir = "settings";	// That folder will be used for settings
+
+	$variablefile = "variables.json";
+	$listfile = "list.json";
 	//
 	// Arrays
 	$fulllist = array();	// Array with all files which will be : $listdirs and $listfiles
+	$fullsettings = array();// Array with variables needed later
+
 	$listfiles = array();	// Will be a list of files
 	$listdirs = array();	// Will be a list of dirs
+	$listsettings = array();
 	//
 	// Variables
-	$settingfolder;	// Here will be the folder used for settings
+//	$settingfolder;	// Here will be the folder used for settings
 	//
 	// LET'S ROLL
 	//
@@ -39,20 +45,19 @@
 		switch(filetype($directory.'/'.$array[$i])) {
 			case "dir":							// When dir
 				$dirsum++;
-				if(file_exists($directory.'/'.$array[$i].'/'.$ignorefile)){
+				if($array[$i] == $ignoredir){
 					$ignored++;
 					break;
 				}
-				if(file_exists($directory.'/'.$array[$i].'/'.$settingsfile)){
+				if($array[$i] == $settingsdir){
 					$settingfolder = $array[$i];
-					$listdirs[] = array($array[$i] => "settings");
 					break;
 				}
-				$listdirs[] = array($array[$i] => "dir");
+				$listdirs[] = array($array[$i]);
 				break;							//
 			case "file":							// When file
 		                $filesum++;
-				$listfiles[] = array($array[$i] => "file");
+				$listfiles[] = array($array[$i]);
 				break;							//
 		}
 	}
@@ -69,16 +74,35 @@
 	echo "Folder \"", $settingfolder, "\" is used for settings.\n";
 	//
 	//Merges $listdirs and $listfiles
-	$list = array_merge($listdirs, $listfiles);
-
+	$fulllist = array_merge($listdirs, $listfiles);
+	//
+	//
+	$fullsettings = array_merge( array("root" => $directory), array("settings" => $settingfolder) );
 	// 	Returns the encoded array in json
-	echo(json_encode($list));
+//	echo(json_encode($fulllist));
 	//	Returns the array. Used only for bug-checking
-	//	var_dump($list);
-
+//		var_dump($fulllist);
+//		var_dump($fullsettings);
 	// THE END?
 
-	function 
+
+	if( file_exists($directory.'/'.$settingsdir.'/'.$variablefile) ) {
+		unlink( $directory.'/'.$settingsdir.'/'.$variablefile);
+	}
+	$file = fopen($directory.'/'.$settingsdir.'/'.$variablefile, "w");
+	fwrite( $file, json_encode($fullsettings));
+	fclose($file);
+	//
+	//
+	if( file_exists($directory.'/'.$settingsdir.'/'.$listfile) ) {
+		unlink( $directory.'/'.$settingsdir.'/'.$listfile);
+	}
+	$file = fopen($directory.'/'.$settingsdir.'/'.$listfile, "w");
+	fwrite( $file, json_encode($fulllist));
+	fclose($file);
+
+	echo( $variablefile." and ".$listfile." are located in ".$directory."/".$settingsdir.".\n");
+//	function 
 
 
 
