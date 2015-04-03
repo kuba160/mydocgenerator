@@ -2,6 +2,12 @@
 	//This file belongs to [prgmname here]. It create a list of files
 	// which will be handled by generatemenu.php
 	//
+
+	include 'vars.php';
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	//
+	//
 	//
 	$directory = "./doc";	// Main folder with documentation
 	// Here are the constants
@@ -28,7 +34,9 @@
 	// Variables
 	$settingsfolder;	// Here will be the folder used for settings
 	//
-	// LET'S ROLL
+	//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
 	//
 	// Now it will scan the directory without '.' and '..'
 	$array = array_diff(scandir($directory), array('..', '.'));
