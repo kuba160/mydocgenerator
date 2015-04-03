@@ -2,9 +2,6 @@
 	//This file belongs to [prgmname here]. It create a list of files
 	// which will be handled by generatemenu.php
 	//
-
-	include 'vars.php';
-
 	//////////////////////////////////////////////////////////////////////////////////////
 	//
 	//
@@ -32,9 +29,10 @@
 	$listsettings = array();
 	//
 	// Variables
-	$settingsfolder;	// Here will be the folder used for settings
+	$settingsfolder;	// folder used for settings only if found
 	//
-	//
+	// Custom variables are stored it vars.json
+	extract( json_decode(file_get_contents("./vars.json")), EXTR_OVERVRITE);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	//
