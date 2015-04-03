@@ -8,8 +8,9 @@ To generate:
 	3. Make a sided menu
 		3.1 Make css style. -				cssmenu.php
 		3.2 Finish a customised list. -			sitemenu.php
-	4. Pages
-		4.1 Transform bbcode to html. -			bbcode.php	
+	4. Pages 
+		4.1 Make a manual for each page -		sitepages.php
+			4.1.1 Transform bbcode to html. -		bbcode.php	
 	5. Generate main page
 		5.1 Make css style. -				cssindex.php
 		5.2 Generate first underpage. -			sitefirst.php
