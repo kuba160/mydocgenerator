@@ -29,7 +29,7 @@
 	$listsettings = array();
 	//
 	// Variables
-	$settingsfolder;	// folder used for settings only if found
+	$settingsfolder;	// folder used for settings only if found later
 	//
 	// Custom variables are stored it vars.json
 	extract( json_decode(file_get_contents("./vars.json")), EXTR_OVERVRITE);
