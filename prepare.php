@@ -26,7 +26,7 @@
 	$listsettings = array();
 	//
 	// Variables
-//	$settingfolder;	// Here will be the folder used for settings
+	$settingsfolder;	// Here will be the folder used for settings
 	//
 	// LET'S ROLL
 	//
@@ -50,7 +50,7 @@
 					break;
 				}
 				if($array[$i] == $settingsdir){
-					$settingfolder = $array[$i];
+					$settingsfolder = $array[$i];
 					break;
 				}
 				$listdirs[] = array($array[$i]);
@@ -66,18 +66,18 @@
 	echo "Found ", $dirsum, " folders and ", $filesum, " files.\n$ignored folder(s) was/were ignored because of ignorefile.\n";
 	//
 	// Check for $settingsfolder
-	if(empty($settingfolder)){
-		echo "You don't have any folder for settings! Create one and add a file called \"", $settingsfile, "\" .";
+	if( empty($settingsfolder) ) {
+		echo "You don't have any folder for settings! Create one and add a file called \"", $settingsdir, "\" .";
 		exit("\n");
 		}
 	//
-	echo "Folder \"", $settingfolder, "\" is used for settings.\n";
+	echo "Folder \"", $settingsdir, "\" is used for settings.\n";
 	//
 	//Merges $listdirs and $listfiles
 	$fulllist = array_merge($listdirs, $listfiles);
 	//
 	//
-	$fullsettings = array_merge( array("root" => $directory), array("settings" => $settingfolder) );
+	$fullsettings = array_merge( array("root" => $directory), array("settings" => $settingsdir) );
 	// 	Returns the encoded array in json
 //	echo(json_encode($fulllist));
 	//	Returns the array. Used only for bug-checking
