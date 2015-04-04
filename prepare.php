@@ -3,113 +3,168 @@
 	// which will be handled by generatemenu.php
 	//
 	//////////////////////////////////////////////////////////////////////////////////////
+	//																					//
+	//								PRECONFIGURABLE VARIABLES							//
+	//																					//
+	//			You can change them using vars.json in form: variable:value				//
+	//																					//
+	// Main folder with documentation													//
+	$directory = "./doc";																//
+	//																					//
+	// Ignore dir name																	//
+	$ignoredir = "ignore";																//
+	//																					//
+	// Settings dir name																//
+	$settingsdir = "settings";															//
+	//																					//
+	//////////////////////////////////////////////////////////////////////////////////////
+	//																					//
+	//									OUTPUT FILES									//
+	//																					//
+	//			You shouldn't change them. They will be used later.						//
+	//																					//
+	// Preconfigurable variables above													//
+	$variablefile =	 "variables.json";													//
+	// Main dir list																	//
+	$listfile =		 "list.json";														//
+	// Statistic of documentation (early)												//
+	$statfile = 	 "statistic.json";													//
+	//																					//
+	//////////////////////////////////////////////////////////////////////////////////////
+	//
+	//									PRGM VARIABLES
+	//
+	// Used for sum:
+	$dirsum = 0;		// of all dirs
+	$diffsum = 0;		// files that not belong to documentation
+	$filesum = 0;		// of all files
+	//
+	// Used for checking if these exist:
+	$ignored = false;		// Ignored folder
+	$settingsexist = false;		// Settings folder existence
 	//
 	//
+	// List of:
+	$listdirs = array();	// of folders
+	$listfiles = array();	// of files
 	//
-	$directory = "./doc";	// Main folder with documentation
-	// Here are the constants
-	$dirsum = 0;		// Will be a sum of all dirs
-	$filesum = 0;		// Will be a sum of all files
-	$ignored = 0;		// Will be a sum of all ignored dirs (containing $ignorefile)
-	$settings = 0;		// Will be a sum of all folders with settings
-	//
-	//Here are the special files
-	$ignoredir = "ignore";		// Will ignore any folder with that file
-	$settingsdir = "settings";	// That folder will be used for settings
+	// Both give:
+	$fulllist = array();	// A list of folders and files
 
-	$variablefile = "variables.json";
-	$listfile = "list.json";
 	//
-	// Arrays
-	$fulllist = array();	// Array with all files which will be : $listdirs and $listfiles
-	$fullsettings = array();// Array with variables needed later
-
-	$listfiles = array();	// Will be a list of files
-	$listdirs = array();	// Will be a list of dirs
-	$listsettings = array();
-	//
+	$statlist = array();	// A list of stats
+	//	$fullsettings = array();// Array with variables needed later
 	// Variables
-	$settingsfolder;	// folder used for settings only if found later
-	//
-	// Custom variables are stored it vars.json
-	extract( json_decode(file_get_contents("./vars.json")), EXTR_OVERVRITE);
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//$settingsfolder;	// folder used for settings only if found later
 	//
 	//
-	// Now it will scan the directory without '.' and '..'
+	//////////////////////////////////////////////////////////////////////////////////////
+	//
+	//									CUSTOM VARIABLES
+	//
+	//				Use it when you want to change some preconfigurable variables
+	//								DEFAULT FILE:	vars.json
+	//
+	// Add variables from vars.json
+	if( file_exists("./vars.json"))
+		extract( json_decode(file_get_contents("./vars.json")), EXTR_OVERVRITE);
+	//
+	//////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////
+	//
+	// Scan the directory and remove '.' and '..'
 	$array = array_diff(scandir($directory), array('..', '.'));
 	//
-	// Message if directory is empty
+	// Check if directory is empty
 	if(empty($array)) {
 		echo "Directory is empty! Returning to [INSERT SHELL NAME HERE].";
 		exit("\n");
 	}
 	//
-	// Now cout all dirs and files.
+	// Now sort all dirs and files.
 	// Each dir will be added to $listdirs and each file to $listfiles.
+	// Both will be summed
 	foreach($array as $i => $i_value) {
-		switch(filetype($directory.'/'.$array[$i])) {
+		switch(filetype($directory.'/'.$array[$i])) {	// Check type of it
 			case "dir":							// When dir
-				$dirsum++;
-				if($array[$i] == $ignoredir){
-					$ignored++;
+				$dirsum++;						// 
+				if($array[$i] == $ignoredir){		// If ignoredir:
+					$ignored = true;						// $ignored = true
+					$diffsum++;
 					break;
 				}
-				if($array[$i] == $settingsdir){
-					$settingsfolder = $array[$i];
+				if($array[$i] == $settingsdir){		// If settingsfolder:
+					$settingsexist = true;					// $settingsexist = true 
+					$diffsum++;
 					break;
 				}
-				$listdirs[] = array($array[$i]);
+				$listdirs[] = array($array[$i]);// Add it to $listdirs array
 				break;							//
 			case "file":							// When file
-		                $filesum++;
-				$listfiles[] = array($array[$i]);
+		                $filesum++;					// sum it
+				$listfiles[] = array($array[$i]);	// add it to array
 				break;							//
 		}
 	}
 	//
 	// Return how many files and folders are found
-	echo "Found ", $dirsum, " folders and ", $filesum, " files.\n$ignored folder(s) was/were ignored because of ignorefile.\n";
+	echo("Found ". $dirsum. " folders and ". $filesum. " files.\n");
+	if($ignored == true)
+		echo("1 folder was ignored.\n");
+	if($ignored == false)
+		echo("No folders were ignored.\n");
+	//
 	//
 	// Check for $settingsfolder
-	if( empty($settingsfolder) ) {
-		echo "You don't have any folder for settings! Create one and add a file called \"", $settingsdir, "\" .";
+	if( !$settingsexist ) {
+		echo "You don't have any folder for settings! Create one named \"", $settingsdir, "\" .";
 		exit("\n");
 		}
 	//
+	// Else
 	echo "Folder \"", $settingsdir, "\" is used for settings.\n";
+	//
 	//
 	//Merges $listdirs and $listfiles
 	$fulllist = array_merge($listdirs, $listfiles);
 	//
+	// Make variables array
+	$fullsettings = array("root" => $directory, "ignoredir" => $ignoredir ,"settings" => $settingsdir);
 	//
-	$fullsettings = array_merge( array("root" => $directory), array("settings" => $settingsdir) );
-	// 	Returns the encoded array in json
-//	echo(json_encode($fulllist));
-	//	Returns the array. Used only for bug-checking
-//		var_dump($fulllist);
-//		var_dump($fullsettings);
-	// THE END?
-
-
-	if( file_exists($directory.'/'.$settingsdir.'/'.$variablefile) ) {
-		unlink( $directory.'/'.$settingsdir.'/'.$variablefile);
+	// Make the statistical array
+	$statlist = array("dirsum" => $dirsum, "diffsum" => $diffsum, "filesum" => $filesum);
+	//
+	// Now save the results
+	//
+	// First save the settings
+	if( file_exists($directory.'/'.$settingsdir.'/'.$variablefile) ) {	// if variablefile exists
+		unlink( $directory.'/'.$settingsdir.'/'.$variablefile);			 // delete it
 	}
-	$file = fopen($directory.'/'.$settingsdir.'/'.$variablefile, "w");
-	fwrite( $file, json_encode($fullsettings));
-	fclose($file);
+	$file = fopen($directory.'/'.$settingsdir.'/'.$variablefile, "w");	// open file
+	fwrite( $file, json_encode($fullsettings));							//	write the json encoded array
+	fclose($file);														// close file
 	//
-	//
+	// Save the list
 	if( file_exists($directory.'/'.$settingsdir.'/'.$listfile) ) {
 		unlink( $directory.'/'.$settingsdir.'/'.$listfile);
 	}
 	$file = fopen($directory.'/'.$settingsdir.'/'.$listfile, "w");
 	fwrite( $file, json_encode($fulllist));
 	fclose($file);
-
-	echo( $variablefile." and ".$listfile." are located in ".$directory."/".$settingsdir.".\n");
+	//
+	// Now save the stats
+	if( file_exists($directory.'/'.$settingsdir.'/'.$statfile) ) {	// if variablefile exists
+		unlink( $directory.'/'.$settingsdir.'/'.$statfile);			 // delete it
+	}
+	$file = fopen($directory.'/'.$settingsdir.'/'.$statfile, "w");	// open file
+	fwrite( $file, json_encode($statlist));							//	write the json encoded array
+	fclose($file);	
+	//
+	echo( "Generated files are located in ".$directory."/".$settingsdir.".\n");
 //	function 
-
+	//	Returns the array. Used only for bug-checking
+	//		var_dump($fulllist);
+	//		var_dump($fullsettings);
 
 
 ?>
