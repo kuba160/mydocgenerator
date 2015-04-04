@@ -28,7 +28,7 @@
 	// Main dir list																	//
 	$listfile =		 "list.json";														//
 	// Statistic of documentation (early)												//
-	$statfile = 	 "statistic.json";													//
+	$statfile = 	 "stats.json";													//
 	//																					//
 	//////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -98,11 +98,11 @@
 					$diffsum++;
 					break;
 				}
-				$listdirs[] = array($array[$i]);// Add it to $listdirs array
+				$listdirs[] = $array[$i];// Add it to $listdirs array
 				break;							//
 			case "file":							// When file
 		                $filesum++;					// sum it
-				$listfiles[] = array($array[$i]);	// add it to array
+				$listfiles[] = $array[$i];	// add it to array
 				break;							//
 		}
 	}
@@ -129,7 +129,8 @@
 	$fulllist = array_merge($listdirs, $listfiles);
 	//
 	// Make variables array
-	$fullsettings = array("root" => $directory, "ignoredir" => $ignoredir ,"settings" => $settingsdir);
+	$fullsettings = array("directory" => $directory, "ignoredir" => $ignoredir ,"settingsdir" => $settingsdir,
+				 		  "variablefile" => $variablefile, "listfile" => $listfile, "statfile" => $statfile);
 	//
 	// Make the statistical array
 	$statlist = array("dirsum" => $dirsum, "diffsum" => $diffsum, "filesum" => $filesum);
@@ -144,6 +145,14 @@
 	fwrite( $file, json_encode($fullsettings));							//	write the json encoded array
 	fclose($file);														// close file
 	//
+	// make a copy in main dir
+	if( file_exists($variablefile) ) {	// if variablefile exists
+		unlink( $variablefile);			 // delete it
+	}
+	$file = fopen($variablefile, "w");	// open file
+	fwrite( $file, json_encode($fullsettings));							//	write the json encoded array
+	fclose($file);
+
 	// Save the list
 	if( file_exists($directory.'/'.$settingsdir.'/'.$listfile) ) {
 		unlink( $directory.'/'.$settingsdir.'/'.$listfile);
@@ -163,7 +172,7 @@
 	echo( "Generated files are located in ".$directory."/".$settingsdir.".\n");
 //	function 
 	//	Returns the array. Used only for bug-checking
-	//		var_dump($fulllist);
+			var_dump($fulllist);
 	//		var_dump($fullsettings);
 
 
