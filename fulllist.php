@@ -34,9 +34,9 @@
 
 	// Now we need to get a filelist
 	$array = json_decode(file_get_contents($directory.'/'.$settingsdir.'/'."list.json"), true);
-var_dump($array);
+//var_dump($array);
 	// Now each root dir
-
+/*
 	foreach ($array as $i => $i_value) {
 		switch(filetype($directory.'/'.$array[$i])) {
 			case "dir":
@@ -47,23 +47,31 @@ var_dump($array);
 					break;
 	}
 }
+*/
+global $settingsdir;
+$fulllist = array_filter(GetArrayFromDir($directory));
+var_dump($fulllist);
+//echo(json_encode($fulllist));
 
-var_dump(array_merge($dirarray, $filearray));
-
-
-	function GetArrayFromDir($path, $file){
-	$array = array_diff(scandir($path.'/'.$file), array('..', '.'));
+	function GetArrayFromDir($path){
+	global $settingsdir;
+	$array = array_diff(scandir($path), array('..', '.'));
+	$filearray = array();
+	$dirarray = array();
 	foreach($array as $i => $i_value) {
-		switch(filetype($path.'/'.$Array[$i])) {	// Check type of it
+		switch(filetype($path.'/'.$array[$i])) {	// Check type of it
 			case "dir":							// When dir
-				$dirarray[] = GetArrayFromDir($path, $array[$i]);
+				if($array[$i] == $settingsdir)
+					break;
+//				$dirsum++;
+				$dirarray[$array[$i]] = GetArrayFromDir($path.'/'.$array[$i]);
 				break;
 			case "file":							// When file
-		    	$filesum++;					// sum it
-				$listfiles[] = array($array[$i]);	// add it to array
+//		    	$filesum++;					// sum it
+				$filearray[] = $array[$i];// = $array[$i];	// add it to array
 				break;							//
 		}
 	}
-
+	return array_merge($dirarray, $filearray);
 	}
 ?>
