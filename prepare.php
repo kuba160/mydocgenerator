@@ -25,37 +25,38 @@
 	//																					//
 	// Preconfigurable variables above													//
 	$variablefile =	 "variables.json";													//
-	// Main dir list																	//
+//	// Main dir list																	//
 	$listfile =		 "list.json";														//
-	// Statistic of documentation (early)												//
-	$statfile = 	 "stats.json";													//
+//	// Statistic of documentation (early)												//
+	$statfile = 	 "stats.json";														//
+	// File with Directory variable														//
+	$continuefile =  ".continue";		// Tells where the settings are				//
 	//																					//
 	//////////////////////////////////////////////////////////////////////////////////////
 	//
 	//									PRGM VARIABLES
 	//
 	// Used for sum:
-	$dirsum = 0;		// of all dirs
-	$diffsum = 0;		// files that not belong to documentation
-	$filesum = 0;		// of all files
+//	$dirsum = 0;		// of all dirs
+//	$diffsum = 0;		// files that not belong to documentation
+//	$filesum = 0;		// of all files
 	//
 	// Used for checking if these exist:
-	$ignored = false;		// Ignored folder
-	$settingsexist = false;		// Settings folder existence
+//	$ignored = false;		// Ignored folder
+//	$settingsexist = false;		// Settings folder existence
 	//
 	//
 	// List of:
-	$listdirs = array();	// of folders
-	$listfiles = array();	// of files
+//	$listdirs = array();	// of folders
+//	$listfiles = array();	// of files
 	//
 	// Both give:
-	$fulllist = array();	// A list of folders and files
+//	$fulllist = array();	// A list of folders and files
 
 	//
-	$statlist = array();	// A list of stats
+//	$statlist = array();	// A list of stats
 	//	$fullsettings = array();// Array with variables needed later
 	// Variables
-	//$settingsfolder;	// folder used for settings only if found later
 	//
 	//
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +82,10 @@
 		exit("\n");
 	}
 	//
-	// Now sort all dirs and files.
+
+	// EDIT: We don't need this anymore. Now it's made in fulllist.php
+
+/*	// Now sort all dirs and files.
 	// Each dir will be added to $listdirs and each file to $listfiles.
 	// Both will be summed
 	foreach($array as $i => $i_value) {
@@ -93,7 +97,7 @@
 					$diffsum++;
 					break;
 				}
-				if($array[$i] == $settingsdir){		// If settingsfolder:
+				if($array[$i] == $settingsdir){		// If settingsdir:
 					$settingsexist = true;					// $settingsexist = true 
 					$diffsum++;
 					break;
@@ -113,10 +117,12 @@
 		echo("1 folder was ignored.\n");
 	if($ignored == false)
 		echo("No folders were ignored.\n");
+*/	//
 	//
-	//
-	// Check for $settingsfolder
-	if( !$settingsexist ) {
+		// END OF EDIT
+
+	// Check for $settingsdir
+	if( !file_exists($directory.'/'.$settingsdir) ) {
 		echo "You don't have any folder for settings! Create one named \"", $settingsdir, "\" .";
 		exit("\n");
 		}
@@ -126,14 +132,15 @@
 	//
 	//
 	//Merges $listdirs and $listfiles
-	$fulllist = array_merge($listdirs, $listfiles);
+	//$fulllist = array_merge($listdirs, $listfiles);
 	//
 	// Make variables array
 	$fullsettings = array("directory" => $directory, "ignoredir" => $ignoredir ,"settingsdir" => $settingsdir,
-				 		  "variablefile" => $variablefile, "listfile" => $listfile, "statfile" => $statfile);
+				 		  "variablefile" => $variablefile, "listfile" => $listfile, "statfile" => $statfile,
+				 		  "continuefile" => $continuefile);
 	//
 	// Make the statistical array
-	$statlist = array("dirsum" => $dirsum, "diffsum" => $diffsum, "filesum" => $filesum);
+	//$statlist = array("dirsum" => $dirsum, "diffsum" => $diffsum, "filesum" => $filesum);
 	//
 	// Now save the results
 	//
@@ -145,34 +152,32 @@
 	fwrite( $file, json_encode($fullsettings));							//	write the json encoded array
 	fclose($file);														// close file
 	//
-	// make a copy in main dir
-	if( file_exists($variablefile) ) {	// if variablefile exists
-		unlink( $variablefile);			 // delete it
+	// make a copy in main dir. name: continue.json
+	if( file_exists($continuefile) ) {	// if variablefile exists
+		unlink( $continuefile);			 // delete it
 	}
-	$file = fopen($variablefile, "w");	// open file
-	fwrite( $file, json_encode($fullsettings));							//	write the json encoded array
+	$file = fopen($continuefile, "w");	// open file
+	fwrite( $file, $directory.'/'.$settingsdir);							//	write the json encoded array
 	fclose($file);
 
-	// Save the list
+/*	// Save the list
 	if( file_exists($directory.'/'.$settingsdir.'/'.$listfile) ) {
 		unlink( $directory.'/'.$settingsdir.'/'.$listfile);
 	}
 	$file = fopen($directory.'/'.$settingsdir.'/'.$listfile, "w");
 	fwrite( $file, json_encode($fulllist));
 	fclose($file);
-	//
-	// Now save the stats
-	if( file_exists($directory.'/'.$settingsdir.'/'.$statfile) ) {	// if variablefile exists
-		unlink( $directory.'/'.$settingsdir.'/'.$statfile);			 // delete it
-	}
-	$file = fopen($directory.'/'.$settingsdir.'/'.$statfile, "w");	// open file
-	fwrite( $file, json_encode($statlist));							//	write the json encoded array
-	fclose($file);	
-	//
+*/	//
+
+	touch($directory.'/'.$settingsdir.'/'.$statfile);
+
+
+
 	echo( "Generated files are located in ".$directory."/".$settingsdir.".\n");
+	echo( "File ./".$continuefile." was modified.\n")
 //	function 
 	//	Returns the array. Used only for bug-checking
-			var_dump($fulllist);
+	//		var_dump($fulllist);
 	//		var_dump($fullsettings);
 
 
