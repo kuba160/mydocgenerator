@@ -1,7 +1,7 @@
 mydocgenerator
 It will generate a documentation in html from bbcode files.
 To generate:
-	1. Generate main list of files and dirs. -	prepare.php
+	1. Prepare for generation ofh -	prepare.php
 	2. Generate a full file list. -			fulllist.php
 	3. Make a sided menu
 		3.1 Make css style. -				cssmenu.php
