@@ -13,3 +13,7 @@ To generate:
 		5.1 Make css style. -				cssindex.php
 		5.2 Generate first underpage. -			sitefirst.php
 		5.3 Finish index.html -				siteindex.php
+
+
+Functions:
+	functions_file.php	- Functions for file operations
