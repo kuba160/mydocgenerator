@@ -12,7 +12,7 @@
 	$directory = "./doc";																//
 	//																					//
 	// Generated documentation															//
-	$generateddir = "./generated";															//
+	$generateddir = "./generated";														//
 	//																					//
 	// Ignore dir name																	//
 	$ignoredir = "ignore";																//
