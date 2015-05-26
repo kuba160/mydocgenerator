@@ -32,6 +32,8 @@
 	$listfile =		 "list.json";														//
 //	// Statistical data of documentation (will be expanded)								//
 	$statfile = 	 "stats.json";														//
+	// Html code file																	//
+	$htmlfile =		 "html.json";														//
 	// File with Directory variable														//
 	$continuefile =  ".continue";		// Tells where the settings are					//
 	//																					//
@@ -58,6 +60,17 @@
 	//////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////
 	//
+	// Check for existence of directory
+	if( !file_exists($directory) ) {
+		echo "The $directory does not exist.";
+		exit("\n");
+		}
+	// and of generated
+	if( !file_exists($generateddir) ) {
+		echo "The $generateddir does not exist.";
+		exit("\n");
+		}
+
 	// Scan the directory and remove '.' and '..'
 	$array = array_diff(scandir($directory), array('..', '.'));
 	//
@@ -90,6 +103,7 @@
 				 			"variablefile" 	=> $variablefile,
 				 			"listfile" 		=> $listfile,
 				 			"statfile" 		=> $statfile,
+				 			"htmlfile"		=> $htmlfile,
 				 			"continuefile" 	=> $continuefile );
 
 	
