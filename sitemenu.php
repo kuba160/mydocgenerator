@@ -17,34 +17,43 @@
 	// Now get the variables
 	extract( json_decode(file_get_contents($settingspath.'/'."variables.json"), true), EXTR_OVERWRITE);
 
-		// Get custom variables
+/*		// Get custom variables 	// NOT NEEDED, done in prepare.php
 	if( file_exists("./vars.json"))
 		extract( json_decode(file_get_contents("./vars.json")), EXTR_OVERVRITE);
-
+*/
 	// We got:
 	// $directory,$ignoredir,$settingsdir,$variablefile,$listfile,$statfile,$continuefile
 
+
 	// Get the list of files/dirs
-	$array = json_decode(file_get_contents($directory.'/'.$settingsdir.'/'.$listfile), true);
+//	$array = json_decode(file_get_contents($directory.'/'.$settingsdir.'/'.$listfile), true);
 
-	// Beginning of menu
-	$init = 
-"<!DOCTYPE html>
-<html lang=\"en-US\">
-<head>
-<title>Menu</title>
-</head>
-<body>";
-	// End of menu
-	$end =
-"</body>
-</html>
-";
-	// Now generate the middle part of it
-	$code = "";
-	GenerateMenu($directory,0, $array);
-	echo($init.$code.$end);
+	// Our html code:
+	extract( json_decode(file_get_contents($settingspath.'/'."html.json"), true), EXTR_OVERWRITE);
 
+	// And our list
+	$array = json_decode(file_get_contents($settingspath.'/'.$listfile), true);
+
+	// Add the addtional things
+//	str_replace(array( "TITLE", "HEAD", "BODY"), array("Menu",     , $htmlbare, $html);;
+//	$code = "";
+	var_dump (GenerateMenu($array,$link));
+	function GenerateMenu($array,$link){
+		$code = "";
+	//	$num  = "1";
+		foreach ($array as $key1 => $value1) {
+			$code = $code."<b>".$key1."</b>\n<br>\n";
+			
+
+			foreach ($value1 as $key2 => $value2) {
+				$code = $code.str_replace(array("LINK", "NAME"), array( $key1."/".$value2 , $value2 ), $link."\n<br>\n");
+			}
+	//	$num = $num+1;
+		}
+		return $code;
+	}
+//	echo($init.$code.$end);
+/* OLD
 	function GenerateMenu($path,$tab,$array){
 		global $code;
 		foreach ($array as $i => $i_value) {
@@ -61,4 +70,6 @@
 			}
 		}
 		return 0;
-	}
+
+}
+*/	
